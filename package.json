@@ -1,0 +1,34 @@
+{
+  "name": "gpt-clone-0",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@google/generative-ai": "^0.21.0",
+    "ai": "^4.0.9",
+    "axios": "^1.7.8",
+    "framer-motion": "^11.12.0",
+    "motion": "12.0.0-alpha.2",
+    "next": "15.0.3",
+    "openai": "^4.73.1",
+    "openai-edge": "^1.2.2",
+    "react": "19.0.0-rc-66855b96-20241106",
+    "react-dom": "19.0.0-rc-66855b96-20241106",
+    "react-icons": "^5.3.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20",
+    "@types/react": "^18",
+    "@types/react-dom": "^18",
+    "eslint": "^8",
+    "eslint-config-next": "15.0.3",
+    "postcss": "^8",
+    "tailwindcss": "^3.4.1",
+    "typescript": "^5"
+  }
+}
