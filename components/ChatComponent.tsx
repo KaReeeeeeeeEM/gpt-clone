@@ -6,7 +6,7 @@ import { useState } from "react";
 import Spinner from "./Spinner";
 import Link from "next/link";
 import { FaArrowDown } from "react-icons/fa";
-import { MdContentCopy } from "react-icons/md";
+import AutomateType from "./AutomateType";
 import { motion, useScroll } from "framer-motion";
 
 interface FormatTextProps {
@@ -52,7 +52,9 @@ function FormatText({ input }: FormatTextProps): JSX.Element {
             }</span>${trimmedCode.split(" ").slice(1).join(" ")}
           </code>
         </pre>
-        <button class="copy-btn absolute top-2 right-2 bg-gray-700 text-white text-sm px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity" data-code="${escapeHtml(trimmedCode)}">
+        <button class="copy-btn absolute top-2 right-2 bg-gray-700 text-white text-sm px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity" data-code="${escapeHtml(
+          trimmedCode
+        )}">
           Copy
         </button>
       </div>`;
@@ -157,14 +159,10 @@ const ChatComponent = () => {
           {isLoading && <Spinner />}
           {error && <div className="text-red-500">{error}</div>}
           {!response && !isLoading && !error && (
-            <div className="text-center text-white">
-              <h2 className="text-lg font-bold">
-                Hello there, how can I assist you today?
-              </h2>
-              <p>
-                Start a quick conversation on any topic eg: How can i bake a
-                cake?
-              </p>
+            <div className="w-full h-full text-md md:text-lg flex items-center justify-center text-center text-white">
+              <AutomateType
+                text="Hi there! I'm a GPT-clone. Ask me anything!"
+                speed={50} />
             </div>
           )}
           {response &&

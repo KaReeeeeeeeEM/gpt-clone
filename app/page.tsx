@@ -8,7 +8,7 @@ export default function Home() {
       className={`flex h-screen md:min-h-screen flex-col items-center justify-center py-8 px-2 lg:p-16 `}
     >
       <div className="relative bg-slate-800 p-3 w-full md:w-[70vw] h-full md:h-auto rounded-lg text-white">
-        <h2 className="text-center text-2xl font-bold mb-6 shadow-sm py-4 flex items-center justify-center">
+        <h2 className="text-center text-lg md:text-2xl font-bold mb-6 shadow-sm py-4 flex items-center justify-center">
           <span>
             <Image
               alt="chat icon"
