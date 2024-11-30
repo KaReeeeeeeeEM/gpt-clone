@@ -16,6 +16,9 @@ const geistMono = localFont({
 export const metadata: Metadata = {
   title: "GPT Clone App",
   description: "Simple clone of the chat gpt app to showcase the power of next.js",
+  icons: {
+    icon: '/chat.png',
+  },
 };
 
 export default function RootLayout({
