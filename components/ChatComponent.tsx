@@ -130,7 +130,7 @@ const ChatComponent = () => {
         {!response && !isLoading && !error && (
           <div className="text-center text-white">
             <h2 className="text-lg font-bold">
-              Hello, how can I assist you today?
+              Hello there, how can I assist you today?
             </h2>
             <p>
               Start a quick conversation on any topic eg: How can i bake a cake?
