@@ -2,12 +2,13 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import Spinner from "./Spinner";
 import Link from "next/link";
 import { FaArrowDown } from "react-icons/fa";
 import AutomateType from "./AutomateType";
 import { motion, useScroll } from "framer-motion";
+import { MdAttachFile } from "react-icons/md";
 
 interface FormatTextProps {
   input?: string;
@@ -108,12 +109,13 @@ function FormatText({ input }: FormatTextProps): JSX.Element {
 
 const ChatComponent = () => {
   const [prompt, setPrompt] = useState("");
+  const [file, setFile] = useState<File | null>(null);
   const [clicked, setClicked] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [response, setResponse] = useState<string[] | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  const { scrollYProgress } = useScroll();
+  const fileInputRef = useRef(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -121,30 +123,75 @@ const ChatComponent = () => {
     setResponse(null);
     setPrompt("");
     setIsLoading(true);
-    try {
-      const res = await fetch("/api/gemini", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ prompt }),
-      });
-
-      if (!res.ok) {
-        const err = await res.json();
-        setError(err.error || "An unknown error occurred");
-        return;
+  
+    // Check if a file is selected
+    if (file) {
+      const reader = new FileReader();
+      
+      reader.onloadend = async () => {
+        const base64File = reader.result.split(",")[1];  // Get Base64 file data
+  
+        try {
+          const res = await fetch("/api/gemini", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              prompt,
+              file: base64File,  // Send the Base64 file data
+            }),
+          });
+  
+          if (!res.ok) {
+            const err = await res.json();
+            setError(err.error || "An unknown error occurred");
+            return;
+          }
+          
+          const data = await res.json();
+          setIsLoading(false);
+          setResponse(data.result);
+          setClicked(false);
+          setFile(null);
+        } catch (err) {
+          setIsLoading(false);
+          console.log("Error fetching response:", err);
+          setError("Failed to connect to API");
+        }
+      };
+  
+      reader.readAsDataURL(file);  // Read the file as Base64
+    } else {
+      // If no file is selected, only send the prompt
+      try {
+        const res = await fetch("/api/gemini", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ prompt }), 
+        });
+  
+        if (!res.ok) {
+          const err = await res.json();
+          setError(err.error || "An unknown error occurred");
+          return;
+        }
+  
+        const data = await res.json();
+        console.log(data.result)
+        setIsLoading(false);
+        setResponse(data.result);
+        setClicked(false);
+      } catch (err) {
+        setIsLoading(false);
+        console.log("Error fetching response:", err);
+        setError("Failed to connect to API");
       }
-      const data = await res.json();
-      setIsLoading(false);
-      setResponse(data.result);
-      setClicked(false);
-    } catch (err) {
-      setIsLoading(false);
-      console.log("Error fetching response:", err);
-      setError("Failed to connect to API");
     }
   };
+  
 
   return (
     <>
@@ -162,7 +209,8 @@ const ChatComponent = () => {
             <div className="w-full h-full text-md md:text-lg flex items-center justify-center text-center text-white">
               <AutomateType
                 text="Hi there! I'm a GPT-clone. Ask me anything!"
-                speed={50} />
+                speed={50}
+              />
             </div>
           )}
           {response &&
@@ -213,9 +261,29 @@ const ChatComponent = () => {
               }
             }}
             onChange={(e) => setPrompt(e.target.value)}
-            className="relative w-full mt-2 text-md bg-slate-600 p-2 outline-none focus:outline-slate-700"
+            className="relative w-full mt-2 text-md bg-slate-600 py-2 px-8 outline-none focus:outline-slate-700"
             placeholder="Enter your prompt here"
           />
+          <div className="absolute top-4 left-3">
+            <div className="relative">
+              <input
+                type="file"
+                ref={fileInputRef}
+                className="hidden"
+                onChange={(e) => setFile(e.target.files[0])} 
+                accept="*/*"
+              />
+
+              {/* Custom button with icon */}
+              <button
+                type="button"
+                onClick={() => fileInputRef.current.click()}
+                className="flex items-center justify-center w-10 h-10 text-gray-800 rounded-full focus:outline-none"
+              >
+                <MdAttachFile className="h-6 w-6 text-slate-300 rotate-45" />
+              </button>
+            </div>
+          </div>
 
           <button
             type="submit"
