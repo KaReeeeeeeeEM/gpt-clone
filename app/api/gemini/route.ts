@@ -8,8 +8,7 @@ import fs from "fs";
 // Persistent conversation history (could be stored in a database for multi-user systems)
 const conversationHistory: any = [];
 
-const MAX_FILE_SIZE = 20 * 1024 * 1024; // 10 MB (adjust as necessary)
-const MAX_FILENAME_LENGTH = 255; // Max length for filenames
+const MAX_FILE_SIZE = 20 * 1024 * 1024; // 20 MB maximum size
 
 export async function POST(request: Request) {
   const apiKey = process.env.GEMINI_API_KEY;
@@ -52,47 +51,52 @@ export async function POST(request: Request) {
 
       // Write the decoded data to a PDF file
       await fs.promises.writeFile("docs/decoded_output.pdf", buffer);
-      console.log("PDF decoded and saved as decoded_output.pdf");
 
       // Upload the file using GoogleAIFileManager (pass the buffer here)
       const uploadResponse = await fileManager.uploadFile(
         "docs/decoded_output.pdf",
         {
           mimeType: "application/pdf",
-          displayName: "Uploaded file",
+          displayName: "file",
         }
       );
+      const fileUri = uploadResponse.file.uri;
 
-      console.log(
-        `Uploaded file ${uploadResponse.file.displayName} as: ${uploadResponse.file.uri}`
-      );
+      // Remove the temporary PDF file
+      await fs.promises.unlink("docs/decoded_output.pdf");
 
-      // Generate content using the uploaded file and prompt
-      const result = await model.generateContent([
-        {
-          fileData: {
-            mimeType: uploadResponse.file.mimeType,
-            fileUri: uploadResponse.file.uri,
-          },
-        },
-        { text: prompt || "Provide a summary of this file." },
-      ]);
-
-      conversationHistory.push({
-        role: "user",
-        parts: [
+      if (fileUri) {
+        // Generate content using the uploaded file and prompt
+        const result = await model.generateContent([
           {
-            text: `Uploaded file ${uploadResponse.file.displayName} as: ${uploadResponse.file.uri}`,
+            fileData: {
+              mimeType: uploadResponse.file.mimeType,
+              fileUri: uploadResponse.file.uri,
+            },
           },
-        ],
-      });
+          { text: prompt || "Provide a summary of this file." },
+        ]);
 
-      // Add the AI's response to the conversation history
-      conversationHistory.push({
-        role: "model",
-        parts: [{ text: result.response.text() }],
-      });
+        conversationHistory.push({
+          role: "user",
+          parts: [
+            {
+              text: `Uploaded file ${uploadResponse.file.displayName} as: ${uploadResponse.file.uri}`,
+            },
+          ],
+        });
 
+        // Add the AI's response to the conversation history
+        conversationHistory.push({
+          role: "model",
+          parts: [{ text: result.response.text() }],
+        });
+      }else{
+        return NextResponse.json(
+          { error: "Failed to upload file." },
+          { status: 500 }
+        );
+      }
     } else {
       // Add the user's input to the conversation history (when no file is provided)
       conversationHistory.push({
