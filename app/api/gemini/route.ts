@@ -8,7 +8,7 @@ import fs from "fs";
 // Persistent conversation history (could be stored in a database for multi-user systems)
 const conversationHistory: any = [];
 
-const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10 MB (adjust as necessary)
+const MAX_FILE_SIZE = 20 * 1024 * 1024; // 10 MB (adjust as necessary)
 const MAX_FILENAME_LENGTH = 255; // Max length for filenames
 
 export async function POST(request: Request) {

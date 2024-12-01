@@ -129,7 +129,7 @@ const ChatComponent = () => {
       const reader = new FileReader();
       
       reader.onloadend = async () => {
-        const base64File = reader.result.split(",")[1];  // Get Base64 file data
+        const base64File = reader.result.toString().split(",")[1];  // Get Base64 file data
   
         try {
           const res = await fetch("/api/gemini", {
