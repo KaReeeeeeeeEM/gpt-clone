@@ -185,6 +185,7 @@ const ChatComponent = () => {
                     alert(
                       "Only PDF format is allowed! Please upload a valid PDF document."
                     );
+                    setFile(null);
                     return;
                   }
                   alert(`${e.target.files[0].name} uploaded successfully!`);
