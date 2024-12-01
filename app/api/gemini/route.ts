@@ -92,8 +92,6 @@ export async function POST(request: Request) {
         parts: [{ text: result.response.text() }],
       });
 
-      console.log(result.response.text())
-
     } else {
       // Add the user's input to the conversation history (when no file is provided)
       conversationHistory.push({
