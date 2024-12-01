@@ -43,23 +43,23 @@ function FormatText({ input }: FormatTextProps): JSX.Element {
   };
 
   input = input.replace(blockCodePattern, (match: string, code: string) => {
-    const trimmedCode = code.trim();
-    return `
-       <div class="relative group">
-        <pre class="bg-black rounded-lg p-3 w-full overflow-x-auto my-2">
-          <code>
-            <span class="font-bold text-slate-400 italic">&lang; &rang; ${
-              trimmedCode.split(" ")[0]
-            }</span>${trimmedCode.split(" ").slice(1).join(" ")}
-          </code>
-        </pre>
-        <button class="copy-btn absolute top-2 right-2 bg-gray-700 text-white text-sm px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity" data-code="${escapeHtml(
-          trimmedCode
-        )}">
-          Copy
-        </button>
-      </div>`;
-  });
+      const trimmedCode = code.trim().toString();
+      return `
+         <div class="relative group">
+          <pre class="bg-black rounded-lg p-3 w-full overflow-x-auto my-2">
+            <code>
+              <span class="font-bold text-slate-400 italic">&lang; &rang; ${
+                trimmedCode.split(" ")[0]
+              }</span>${trimmedCode.split(" ").slice(1).join(" ")}
+            </code>
+          </pre>
+          <button class="copy-btn absolute top-2 right-2 bg-gray-700 text-white text-sm px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity" data-code="${escapeHtml(
+            trimmedCode
+          )}">
+            Copy
+          </button>
+        </div>`;
+    });
 
   // Handle inline code (`)
   const inlineCodePattern = /`([^`]+)`/g;
