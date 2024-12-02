@@ -206,7 +206,7 @@ const ChatComponent = () => {
 
           <button
             type="submit"
-            disabled={!prompt || isLoading || !file}
+            disabled={!prompt || isLoading }
             className={`absolute bottom-8 right-6 rounded-md bg-blue-600 px-4 py-2 font-bold mt-2 disabled:opacity-60`}
           >
             Send
